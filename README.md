@@ -5,9 +5,9 @@
 
 ## This is a working implementation of library React-Media-Recorder
 
-##Prerequisites : Node.js
+## Prerequisites : Node.js
 
-##Instructions
+## Instructions
 
 After Cloning the project,
 
