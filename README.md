@@ -19,3 +19,9 @@ After Cloning the project,
 
 4. The project will be running on localhost:3000
 
+## Next Update:
+
+- Better UI
+- Special Buttons for Mic(on/off)
+- Special Button for download the recorded video
+- other bug fixes
