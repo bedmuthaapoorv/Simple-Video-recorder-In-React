@@ -83,7 +83,7 @@ function download(mediaBlobUrl){
       justifyContent:"center",
       flexDirection:"column",
     }}>
-      Video Capture Tool For eKYC 
+      Video Capture Tool By Apoorv Bedmutha
       <p>
       <ReactMediaRecorder
       video
