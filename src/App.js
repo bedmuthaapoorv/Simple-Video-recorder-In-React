@@ -1,30 +1,8 @@
-import logo from './logo.svg';
+
 import './App.css';
 import { ReactMediaRecorder } from "react-media-recorder";
-import { useEffect, useRef } from 'react';
-/*
-const VideoPreview = ({ stream }: { stream: MediaStream | null }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+import { useEffect, useRef, useState } from 'react';
 
-  useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-  if (!stream) {
-    return null;
-  }
-  return <video ref={videoRef} width={500} height={500} autoPlay controls />;
-};
-
-const App = () => (
-  <ReactMediaRecorder
-    video
-    render={({ previewStream }) => {
-      return <VideoPreview stream={previewStream} />;
-    }}
-  />
-);*/
 const VideoPreview=(props)=>{
   const stream=props.stream;
   console.log(stream)
@@ -45,7 +23,7 @@ const VideoPreview=(props)=>{
     alignItems:"center"
   }}>
     Live Preview
-  <video ref={videoRef} width="390vw" autoPlay />
+  <video id="livePreview" ref={videoRef} width="390vw" autoPlay />
   </div>
     );
   
@@ -58,10 +36,13 @@ function liveStream(stream){
 }
 function download(mediaBlobUrl){
   if(mediaBlobUrl!=null){
-  
-  return (<a id="mediaDownload" href={mediaBlobUrl} download="apoorv.mp4" style={{display:'none'}}>
-  hi
-</a>)
+    return (
+  <a href={mediaBlobUrl} download="apoorv.mp4">
+    <button id="mediaDownload" >
+      download
+    </button>
+  </a>
+)
 }
 
 }
@@ -75,57 +56,52 @@ function download(mediaBlobUrl){
     })
     return <></>
   }
-  function App() {
+  function stopRecordingWrapper(fn){
     
+    //document.getElementById("livePreview").style.display='hidden'
+    fn()
+  }
+  function liveStreamWrapper(previewStream,fn,status){
+    //console.log(status)
+    if(status!='stopped'){
+      return fn(previewStream)
+    }
+  }
+  function recordedVideo(mediaBlob,status){
+    //console.log(status)
+    if(status=='stopped'){
+      return <div>Recorded Video<p/><video width="390vw" src={mediaBlob} controls></video></div>
+    }
+  }
+  function App() {
+    let [audioOnOff,setAudio]=useState('true')
     return (
-    <div className="App" style={{
-      display:"flex",
-      justifyContent:"center",
-      flexDirection:"column",
-    }}>
-      Video Capture Tool By Apoorv Bedmutha
-      <p>
+    <div className="App">
       <ReactMediaRecorder
       video
-      audio={false}
+      audio={audioOnOff}
       render={({ status, startRecording, stopRecording, mediaBlobUrl,previewStream}) => (
-        <div>
-          <p>Status : {status}</p>
-          <div style={{
-            display:"flex",
-            justifyContent:"space-around"
-          }}>
-          <button onClick={startRecording} style={{
-            width:"15vw",
-            height:"10vh"
-          }}>Start Recording</button>
-          <button onClick={stopRecording} style={{
-            width:"15vw",
-            height:"10vh"
-          }}>Stop Recording</button>
+        <div className='App__mediaRecorderWrapper'>
+          
+          <div className='mediaRecorderWrapper__buttons'>
+            <div>Status : {status}</div>
+            <div>Keep Mic On: {''+audioOnOff} </div>
+            <button onClick={startRecording}>Start Recording</button>
+            <button onClick={()=>stopRecordingWrapper(stopRecording)}>Stop Recording</button>
+            <button onClick={()=>setAudio(!audioOnOff)}>Mic On or Off</button>
+            {download(mediaBlobUrl)}
           </div>
-            <div style={{
-              display:"flex",
-              justifyContent:"center",
-              alignItems:"center"
-            }}>
-           <div style={{
-             display:"flex",
-             justifyContent:"center",
-             alignItems:"center",
-             flexDirection:"column"
-           }}>
-             Recorded Video
-           <video width="390vw" src={mediaBlobUrl} controls></video>
-           </div>
-            {download(mediaBlobUrl)}          
+
+           {recordedVideo(mediaBlobUrl,status)}
+           
+          
             {/* {Dwn()} */}
-           {liveStream(previewStream)}
-           </div>
+            
+           {liveStreamWrapper(previewStream,liveStream,status)}
+           
         </div>
       )}
     />
-      </p>
     </div>
   );
 }
